@@ -1,4 +1,4 @@
-module github.com/mark-ignacio/zerolog-stackdriver
+module github.com/mark-ignacio/zerolog-gcp
 
 go 1.14
 
