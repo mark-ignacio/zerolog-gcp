@@ -1,4 +1,4 @@
-package zlsd
+package zlg
 
 import (
 	"context"
@@ -91,5 +91,5 @@ func NewCloudLoggingWriter(ctx context.Context, projectID, logID string, opts Cl
 		logger:      logger,
 		severityMap: severityMap,
 	}
-	return nil, nil
+	return
 }
