@@ -8,7 +8,3 @@ Some notable features:
 * Handles converting `zerolog.WarnLevel` to `logging.Warning`.
 * Zerolog's trace level maps to Cloud Logging's Default level.
 * Cloud Logging's Alert and Emergency levels are not used.
-
-```go
-
-```
