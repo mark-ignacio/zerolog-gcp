@@ -27,6 +27,9 @@ var DefaultSeverityMap = map[zerolog.Level]logging.Severity{
 	zerolog.FatalLevel: logging.Critical,
 }
 
+// secretly, we keep tabs of all loggers
+var loggersWeMade = make([]*logging.Logger, 0, 1)
+
 func (c *cloudLoggingWriter) Write(p []byte) (int, error) {
 	// writing to stackdriver without levels? o-okay...
 	entry := logging.Entry{Payload: json.RawMessage(p)}
@@ -81,6 +84,7 @@ func NewCloudLoggingWriter(ctx context.Context, projectID, logID string, opts Cl
 			return
 		}
 		logger = client.Logger(logID, opts.LoggerOptions...)
+		loggersWeMade = append(loggersWeMade, logger)
 	}
 	severityMap := opts.SeverityMap
 	if severityMap == nil {
@@ -92,4 +96,13 @@ func NewCloudLoggingWriter(ctx context.Context, projectID, logID string, opts Cl
 		severityMap: severityMap,
 	}
 	return
+}
+
+// Flush blocks while flushing all loggers this module created.
+func Flush() {
+	for _, logger := range loggersWeMade {
+		if logger != nil {
+			logger.Flush()
+		}
+	}
 }
