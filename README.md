@@ -20,6 +20,10 @@ Some notable features:
 Logging only to Stackdriver:
 
 ```go
+import zlg "github.com/mark-ignacio/zerolog-gcp"
+
+// [...]
+
 gcpWriter, err := zlg.NewCloudLoggingWriter(ctx, projectID, logID, zlg.CloudLoggingOptions{})
 if err != nil {
     log.Panic().Err(err).Msg("could not create a CloudLoggingWriter")
@@ -40,7 +44,7 @@ log.Logger = log.Output(zerolog.MultiLevelWriter(
 ))
 ```
 
-To ensure that the last asynchronous logs are delievered to Cloud Logging, zlg keeps a reference to all `logging.Logger` structs that zlg itself creates. If memory leaks of loggers are a concern, consider specifying providing a logger client via `zlg.CloudLoggingOptions` instead.
+To ensure that the last asynchronous logs are delivered to Cloud Logging, zlg keeps a reference to all `logging.Logger` structs that zlg itself creates. If memory leaks of loggers are a concern, consider specifying providing a logger client via `zlg.CloudLoggingOptions` instead.
 
 ```go
 gcpWriter, err := zlg.NewCloudLoggingWriter(ctx, projectID, logID, zlg.CloudLoggingOptions{})
