@@ -71,13 +71,13 @@ func (c *cloudLoggingWriter) WriteLevel(level zerolog.Level, payload []byte) (in
 
 // CloudLoggingOptions specifies some optional configuration.
 type CloudLoggingOptions struct {
-	// SeverityMap can be optionally specified to use instead of DefaultSeverityMap.
+	// Optionally specified to use instead of DefaultSeverityMap.
 	SeverityMap map[zerolog.Level]logging.Severity
 
-	// Logger can be optionally provided in lieu of constructing a logger on the caller's behalf.
+	// Optionally specified instead of constructing a GCP logger on the caller's behalf.
 	Logger *logging.Logger
 
-	// LoggerOptions is optionally used to construct a Logger.
+	// Optionally used to construct a GCP Logger.
 	LoggerOptions []logging.LoggerOption
 }
 
