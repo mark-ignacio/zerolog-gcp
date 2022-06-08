@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	cloud.google.com/go/logging v1.4.2
-	github.com/rs/zerolog v1.26.1
+	github.com/rs/zerolog v1.27.0
 )
 
 require (
@@ -14,6 +14,8 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/googleapis/gax-go/v2 v2.1.1 // indirect
+	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/net v0.0.0-20220111093109-d55c255bac03 // indirect
 	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8 // indirect
