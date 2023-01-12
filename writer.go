@@ -3,16 +3,17 @@ package zlg
 import (
 	"context"
 	"encoding/json"
+	"sync"
 
 	"cloud.google.com/go/logging"
 	"github.com/rs/zerolog"
 )
 
 type cloudLoggingWriter struct {
-	ctx         context.Context
-	wroteOnce   bool
-	logger      *logging.Logger
-	severityMap map[zerolog.Level]logging.Severity
+	ctx                context.Context
+	firstBlockingWrite sync.Once
+	logger             *logging.Logger
+	severityMap        map[zerolog.Level]logging.Severity
 
 	zerolog.LevelWriter
 }
@@ -33,14 +34,13 @@ var loggersWeMade = make([]*logging.Logger, 0, 1)
 func (c *cloudLoggingWriter) Write(p []byte) (int, error) {
 	// writing to stackdriver without levels? o-okay...
 	entry := logging.Entry{Payload: json.RawMessage(p)}
-	if !c.wroteOnce {
-		c.wroteOnce = true
-		err := c.logger.LogSync(c.ctx, entry)
-		if err != nil {
-			return 0, err
-		}
-	} else {
-		c.logger.Log(entry)
+	c.logger.Log(entry)
+	var err error
+	c.firstBlockingWrite.Do(func() {
+		err = c.logger.Flush()
+	})
+	if err != nil {
+		return 0, err
 	}
 	return len(p), nil
 }
@@ -50,14 +50,13 @@ func (c *cloudLoggingWriter) WriteLevel(level zerolog.Level, payload []byte) (in
 		Severity: c.severityMap[level],
 		Payload:  json.RawMessage(payload),
 	}
-	if !c.wroteOnce {
-		c.wroteOnce = true
-		err := c.logger.LogSync(c.ctx, entry)
-		if err != nil {
-			return 0, err
-		}
-	} else {
-		c.logger.Log(entry)
+	c.logger.Log(entry)
+	var err error
+	c.firstBlockingWrite.Do(func() {
+		err = c.logger.Flush()
+	})
+	if err != nil {
+		return 0, err
 	}
 	if level == zerolog.FatalLevel {
 		// ensure that any pending logs are written before exit
