@@ -114,7 +114,7 @@ func NewCloudLoggingWriter(ctx context.Context, projectID, logID string, opts Cl
 	return
 }
 
-// Flush blocks while flushing all loggers this module created. It returns any errors
+// Flush blocks while flushing all loggers this module created.
 func Flush() []error {
 	var errs []error
 	for _, logger := range loggersWeMade {
