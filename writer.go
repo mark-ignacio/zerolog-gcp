@@ -59,7 +59,7 @@ func (c *cloudLoggingWriter) WriteLevel(level zerolog.Level, payload []byte) (in
 	if err != nil {
 		return 0, err
 	}
-	if level == zerolog.FatalLevel {
+	if level == zerolog.FatalLevel || level == zerolog.PanicLevel {
 		// ensure that any pending logs are written before exit
 		err := c.logger.Flush()
 		if err != nil {

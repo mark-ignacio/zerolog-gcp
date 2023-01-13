@@ -8,7 +8,7 @@
 Some notable features:
 
 - The first log written to Cloud Logging is a slow, blocking write to confirm connectivity + permissions, but all subsequent writes are non-blocking.
-- Flushes all logs before a `logger.Fatal()` call
+- Flushes all logs before a `.Fatal()` or `.Panic()`
 - Ensure that all zlg-created loggers are flushed before program exit with `defer zlg.Flush()`
 - Overridable Cloud Monitoring levels (zerolog -> Cloud Logging):
   - Trace -> Default
