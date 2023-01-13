@@ -7,6 +7,7 @@ import (
 
 	"cloud.google.com/go/logging"
 	"github.com/rs/zerolog"
+	"google.golang.org/api/option"
 )
 
 type cloudLoggingWriter struct {
@@ -58,7 +59,7 @@ func (c *cloudLoggingWriter) WriteLevel(level zerolog.Level, payload []byte) (in
 	if err != nil {
 		return 0, err
 	}
-	if level == zerolog.FatalLevel {
+	if level == zerolog.FatalLevel || level == zerolog.PanicLevel {
 		// ensure that any pending logs are written before exit
 		err := c.logger.Flush()
 		if err != nil {
@@ -70,13 +71,19 @@ func (c *cloudLoggingWriter) WriteLevel(level zerolog.Level, payload []byte) (in
 
 // CloudLoggingOptions specifies some optional configuration.
 type CloudLoggingOptions struct {
-	// Optionally specified to use instead of DefaultSeverityMap.
+	// Specify this to override DefaultSeverityMap.
 	SeverityMap map[zerolog.Level]logging.Severity
 
-	// Optionally specified instead of constructing a GCP logger on the caller's behalf.
+	// Used during *logging.Client construction.
+	ClientOptions []option.ClientOption
+
+	// Used during *logging.Client construction.
+	ClientOnError func(error)
+
+	// Specify this to override the default of constructing a *logging.Logger on the caller's behalf.
 	Logger *logging.Logger
 
-	// Optionally used to construct a GCP Logger.
+	// Used during GCP Logger construction.
 	LoggerOptions []logging.LoggerOption
 }
 
@@ -85,9 +92,12 @@ func NewCloudLoggingWriter(ctx context.Context, projectID, logID string, opts Cl
 	logger := opts.Logger
 	if opts.Logger == nil {
 		var client *logging.Client
-		client, err = logging.NewClient(ctx, projectID)
+		client, err = logging.NewClient(ctx, projectID, opts.ClientOptions...)
 		if err != nil {
 			return
+		}
+		if opts.ClientOnError != nil {
+			client.OnError = opts.ClientOnError
 		}
 		logger = client.Logger(logID, opts.LoggerOptions...)
 		loggersWeMade = append(loggersWeMade, logger)
@@ -105,10 +115,14 @@ func NewCloudLoggingWriter(ctx context.Context, projectID, logID string, opts Cl
 }
 
 // Flush blocks while flushing all loggers this module created.
-func Flush() {
+func Flush() []error {
+	var errs []error
 	for _, logger := range loggersWeMade {
 		if logger != nil {
-			logger.Flush()
+			if err := logger.Flush(); err != nil {
+				errs = append(errs, err)
+			}
 		}
 	}
+	return errs
 }

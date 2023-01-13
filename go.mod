@@ -1,10 +1,11 @@
 module github.com/mark-ignacio/zerolog-gcp
 
-go 1.17
+go 1.19
 
 require (
 	cloud.google.com/go/logging v1.6.1
 	github.com/rs/zerolog v1.28.0
+	google.golang.org/api v0.103.0
 )
 
 require (
@@ -25,7 +26,6 @@ require (
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.0.0-20220728004956-3c1f35247d10 // indirect
 	golang.org/x/text v0.4.0 // indirect
-	google.golang.org/api v0.103.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20221201164419-0e50fba7f41c // indirect
 	google.golang.org/grpc v1.50.1 // indirect
