@@ -1,6 +1,6 @@
 module github.com/mark-ignacio/zerolog-gcp
 
-go 1.17
+go 1.19
 
 require (
 	cloud.google.com/go/logging v1.6.1
