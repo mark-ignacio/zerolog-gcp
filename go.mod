@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	cloud.google.com/go/logging v1.9.0
-	github.com/rs/zerolog v1.31.0
+	github.com/rs/zerolog v1.32.0
 	google.golang.org/api v0.158.0
 )
 
