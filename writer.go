@@ -88,7 +88,10 @@ type CloudLoggingOptions struct {
 }
 
 // NewCloudLoggingWriter creates a LevelWriter that logs only to GCP Cloud Logging using non-blocking calls.
-func NewCloudLoggingWriter(ctx context.Context, projectID, logID string, opts CloudLoggingOptions) (writer zerolog.LevelWriter, err error) {
+func NewCloudLoggingWriter(ctx context.Context, projectID, logID string, opts *CloudLoggingOptions) (writer zerolog.LevelWriter, err error) {
+	if opts == nil {
+		opts = &CloudLoggingOptions{}
+	}
 	logger := opts.Logger
 	if opts.Logger == nil {
 		var client *logging.Client
